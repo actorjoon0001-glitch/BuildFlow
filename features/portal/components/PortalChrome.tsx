@@ -170,6 +170,9 @@ export function PortalChrome() {
                       <>
                         <Icon name={s.icon} size={16} className="text-neutral-500" />
                         <span className="flex-1 text-neutral-800">{s.label}</span>
+                        {s.teamLabel && (
+                          <span className="text-[11px] text-neutral-400">{s.teamLabel}</span>
+                        )}
                         {!ready && <span className="text-[11px] text-neutral-400">준비중</span>}
                       </>
                     );

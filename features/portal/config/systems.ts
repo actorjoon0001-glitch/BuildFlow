@@ -42,6 +42,8 @@ export interface SystemCard {
    * 로그인이 필요한데 iframe 서드파티 쿠키 차단으로 로그인이 안 되는 시스템용.
    */
   openInNewTab?: boolean;
+  /** 시스템 드롭다운 등에서 이름 옆에 표시할 담당 팀 라벨 */
+  teamLabel?: string;
 }
 
 export const SYSTEMS: SystemCard[] = [
@@ -113,6 +115,7 @@ export const SYSTEMS: SystemCard[] = [
     ready: true,
     launcher: true,
     roles: ["design"],
+    teamLabel: "설계팀",
   },
   {
     key: "construction",
@@ -125,6 +128,7 @@ export const SYSTEMS: SystemCard[] = [
     ready: true,
     launcher: true,
     roles: ["construction"],
+    teamLabel: "시공팀",
   },
   {
     key: "order",
@@ -147,6 +151,7 @@ export const SYSTEMS: SystemCard[] = [
     ready: true,
     launcher: true,
     roles: ["finance"],
+    teamLabel: "경영지원팀",
   },
   {
     key: "exhibition",
