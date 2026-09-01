@@ -48,18 +48,6 @@ export interface SystemCard {
 
 export const SYSTEMS: SystemCard[] = [
   {
-    key: "seum",
-    label: "세움OS",
-    desc: "계약·설계·시공·정산 통합 업무 시스템",
-    icon: "hub",
-    tone: "green",
-    href: "/portal/app/seum",
-    serviceUrl: "https://seum-os.netlify.app/dashboard.html",
-    ready: true,
-    launcher: true,
-    featured: true,
-  },
-  {
     key: "catalog",
     label: "상담용 카탈로그",
     desc: "모델·옵션·가격 안내",
@@ -81,6 +69,7 @@ export const SYSTEMS: SystemCard[] = [
     ready: true,
     launcher: true,
     roles: ["sales", "finance"],
+    teamLabel: "영업팀",
   },
   {
     key: "home-planner",
