@@ -14,9 +14,8 @@ interface Contact {
 }
 
 const SHOWROOMS = [
-  { value: "headquarters", label: "본사" },
+  { value: "headquarters", label: "본사 전시장" },
   { value: "showroom1", label: "1전시장" },
-  { value: "showroom3", label: "3전시장" },
   { value: "ganghwa", label: "강화전시장" },
   { value: "andong", label: "안동전시장" },
   { value: "gwangju", label: "광주전시장" },
