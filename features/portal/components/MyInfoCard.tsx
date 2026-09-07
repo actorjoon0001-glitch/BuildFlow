@@ -1,18 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "./Card";
 import { Icon } from "./icons";
 import { useProfile } from "./PortalProvider";
 import { ProfileEditModal } from "./ProfileEditModal";
-import { profile as mock } from "../data/mock";
 
-/** 내 정보 — 로그인 직원 프로필(세움OS) + 미확인 공지/알림 */
+/** 내 정보 — 로그인 직원 프로필(세움OS) + 미확인 공지 + 최근 로그인 */
 export function MyInfoCard() {
   const { profile: me } = useProfile();
   const [editing, setEditing] = useState(false);
+  const [unread, setUnread] = useState<number | null>(null);
+  const [lastLogin, setLastLogin] = useState<string | null>(null);
+
   const name = me?.name ?? "불러오는 중…";
   const sub = [me?.team, me?.permission].filter(Boolean).join(" · ") || me?.email || "";
+
+  // 미확인 공지(전체 공지 - 내가 읽은 공지) + 최근 로그인 시각(세션)
+  useEffect(() => {
+    (async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        setLastLogin(user.last_sign_in_at ?? null);
+
+        const [annRes, readRes] = await Promise.all([
+          supabase.from("announcements").select("id"),
+          supabase.from("notice_reads").select("notice_id").eq("user_id", user.id),
+        ]);
+        if (annRes.error) return;
+        const readSet = new Set(
+          ((readRes.data ?? []) as { notice_id: string }[]).map((r) => r.notice_id),
+        );
+        const anns = (annRes.data ?? []) as { id: string }[];
+        setUnread(anns.filter((a) => !readSet.has(a.id)).length);
+      } catch {
+        // 조회 실패 시 값 미표시
+      }
+    })();
+  }, []);
+
+  const lastLoginText = lastLogin ? lastLogin.slice(0, 16).replace("T", " ") : "-";
 
   return (
     <Card
@@ -62,7 +94,7 @@ export function MyInfoCard() {
             <Icon name="clock" size={15} className="text-neutral-400" />
             최근 로그인
           </dt>
-          <dd className="tabular-nums text-neutral-700">{mock.lastLogin}</dd>
+          <dd className="tabular-nums text-neutral-700">{lastLoginText}</dd>
         </div>
         <div className="flex items-center justify-between">
           <dt className="flex items-center gap-2 text-neutral-500">
@@ -71,18 +103,7 @@ export function MyInfoCard() {
           </dt>
           <dd>
             <span className="rounded-full bg-seum-500 px-2 py-0.5 text-xs font-bold text-white">
-              {mock.unreadNotices}
-            </span>
-          </dd>
-        </div>
-        <div className="flex items-center justify-between">
-          <dt className="flex items-center gap-2 text-neutral-500">
-            <Icon name="bell" size={15} className="text-neutral-400" />
-            알림
-          </dt>
-          <dd>
-            <span className="rounded-full bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">
-              {mock.alertCount}
+              {unread ?? "-"}
             </span>
           </dd>
         </div>

@@ -9,7 +9,6 @@ import { NAV_MENU, UTIL_LINKS } from "../config/nav";
 import { ROLES, roleLabel } from "../config/roles";
 import type { Role } from "../config/roles";
 import { launcherSystems } from "../config/systems";
-import { profile } from "../data/mock";
 
 /** 상단 고정 헤더(흰색 · 로고/프로필) + 그린 네비게이션 바 */
 export function PortalChrome() {
@@ -80,11 +79,6 @@ export function PortalChrome() {
               className="relative rounded-lg p-2 text-neutral-400 transition hover:bg-neutral-100 hover:text-seum-600"
             >
               <Icon name="bell" size={20} />
-              {profile.alertCount > 0 && (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-                  {profile.alertCount}
-                </span>
-              )}
             </button>
 
             <div className="ml-1 flex items-center gap-3 border-l border-neutral-200 pl-3">
