@@ -26,27 +26,6 @@ export const profile: Profile = {
   alertCount: 3,
 };
 
-export type ScheduleType = "방문예약" | "회의" | "계약" | "설계" | "시공" | "휴무";
-
-export interface ScheduleItem {
-  time: string;
-  type: ScheduleType;
-  title: string;
-  place: string;
-}
-
-export const todaySchedule: ScheduleItem[] = [
-  { time: "09:30", type: "방문예약", title: "김민수 고객 모델하우스 방문", place: "본사 전시동" },
-  { time: "10:30", type: "회의", title: "주간 영업 현황 공유 회의", place: "대회의실" },
-  { time: "11:00", type: "계약", title: "이정훈 고객 본계약 체결", place: "상담실 2" },
-  { time: "13:30", type: "설계", title: "양평 전원주택 도면 검토", place: "설계팀 회의실" },
-  { time: "15:00", type: "시공", title: "광주 25평 모듈러 설치 점검", place: "현장 / 광주" },
-  { time: "17:00", type: "방문예약", title: "최아름 고객 옵션 상담", place: "상담실 1" },
-];
-
-/** 일정이 있는 날짜(이번달) — 캘린더 위젯 점 표시용 */
-export const scheduleDays = [3, 5, 10, 12, 17, 18, 24, 27];
-
 export type NoticeTeam =
   | "전체"
   | "영업팀"
