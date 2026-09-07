@@ -160,9 +160,6 @@ export default function OrgDirectoryPage() {
                     <div className="min-w-0">
                       <p className="flex items-center gap-1.5">
                         <span className="text-sm font-semibold text-neutral-900">{c.name ?? "-"}</span>
-                        {c.position_name && (
-                          <span className="text-[11px] text-neutral-400">{c.position_name}</span>
-                        )}
                         {!g.hideShowroom && c.showroom && (
                           <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-500">
                             {showroomLabel(c.showroom)}
