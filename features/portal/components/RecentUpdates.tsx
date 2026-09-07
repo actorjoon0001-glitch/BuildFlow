@@ -3,6 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Card } from "./Card";
 import { useProfile } from "./PortalProvider";
+import { SYSTEMS } from "../config/systems";
+
+/** 업데이트 대상 선택 옵션 = 세움 플랫폼 + 런처 시스템들 */
+const SYSTEM_OPTIONS = ["세움 플랫폼", ...SYSTEMS.filter((s) => s.launcher).map((s) => s.label)];
 
 interface UpdateRow {
   id: string;
@@ -103,12 +107,16 @@ export function RecentUpdates() {
       {adding && (
         <div className="mb-3 space-y-2 rounded-lg border border-neutral-200 bg-neutral-50 p-3">
           <div className="flex gap-2">
-            <input
+            <select
               value={system}
               onChange={(e) => setSystem(e.target.value)}
-              placeholder="시스템 (예: Call OS)"
               className="min-w-0 flex-1 rounded-md border border-neutral-300 bg-white px-2 py-1.5 text-sm text-neutral-900 outline-none focus:border-seum-500"
-            />
+            >
+              <option value="">시스템 선택</option>
+              {SYSTEM_OPTIONS.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
             <select
               value={tag}
               onChange={(e) => setTag(e.target.value)}
