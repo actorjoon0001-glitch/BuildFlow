@@ -85,26 +85,30 @@ export function CalendarWidget({ eventDates, selected, onSelect }: Props) {
               key={d}
               type="button"
               onClick={() => onSelect(dateStr)}
-              className="flex flex-col items-center"
+              className={`flex flex-col items-center rounded-lg py-0.5 transition ${
+                hasEvent && !isToday ? "bg-seum-100/70" : ""
+              }`}
             >
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[12px] transition ${
                   isToday
                     ? "bg-seum-500 font-bold text-white"
                     : isSelected
-                      ? "bg-seum-100 font-semibold text-seum-700"
-                      : dow === 0
-                        ? "text-rose-500 hover:bg-white"
-                        : dow === 6
-                          ? "text-blue-500 hover:bg-white"
-                          : "text-neutral-700 hover:bg-white"
+                      ? "font-bold text-seum-700 ring-2 ring-seum-500 ring-inset"
+                      : hasEvent
+                        ? "font-bold text-seum-700"
+                        : dow === 0
+                          ? "text-rose-500 hover:bg-white"
+                          : dow === 6
+                            ? "text-blue-500 hover:bg-white"
+                            : "text-neutral-700 hover:bg-white"
                 }`}
               >
                 {d}
               </span>
               <span
-                className={`mt-0.5 h-1 w-1 rounded-full ${
-                  hasEvent ? "bg-seum-400" : "bg-transparent"
+                className={`mt-0.5 h-1.5 w-1.5 rounded-full ${
+                  hasEvent ? "bg-seum-500" : "bg-transparent"
                 }`}
               />
             </button>
