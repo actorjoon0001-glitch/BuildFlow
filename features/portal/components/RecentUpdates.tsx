@@ -17,11 +17,25 @@ interface UpdateRow {
 }
 
 const TAGS = ["신규", "개선", "수정"];
-const TAG_STYLE: Record<string, string> = {
-  신규: "bg-seum-100 text-seum-700",
-  개선: "bg-blue-100 text-blue-700",
-  수정: "bg-amber-100 text-amber-700",
+
+/** 시스템별 배지 색상 = 각 시스템의 tone 재사용 */
+const SYSTEM_TONE: Record<string, string> = { "세움 플랫폼": "green" };
+SYSTEMS.forEach((s) => {
+  SYSTEM_TONE[s.label] = s.tone;
+});
+const TONE_BADGE: Record<string, string> = {
+  green: "bg-seum-100 text-seum-700",
+  blue: "bg-blue-100 text-blue-700",
+  indigo: "bg-indigo-100 text-indigo-700",
+  amber: "bg-amber-100 text-amber-700",
+  violet: "bg-violet-100 text-violet-700",
+  cyan: "bg-cyan-100 text-cyan-700",
+  rose: "bg-rose-100 text-rose-700",
+  teal: "bg-teal-100 text-teal-700",
+  slate: "bg-slate-100 text-slate-700",
 };
+const systemBadge = (system: string) =>
+  TONE_BADGE[SYSTEM_TONE[system] ?? "slate"] ?? "bg-neutral-100 text-neutral-600";
 
 /** 최근 업데이트 — system_updates 실데이터. admin/master는 글쓰기/삭제 가능. */
 export function RecentUpdates() {
@@ -149,20 +163,18 @@ export function RecentUpdates() {
 
       <ul className="space-y-2.5">
         {rows.map((u) => (
-          <li key={u.id} className="group flex items-start gap-3">
+          <li key={u.id} className="group flex items-start gap-2.5">
             <span
-              className={`mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                TAG_STYLE[u.tag ?? "신규"] ?? "bg-neutral-100 text-neutral-600"
-              }`}
+              className={`mt-0.5 shrink-0 rounded-md px-2 py-0.5 text-[11px] font-semibold ${systemBadge(u.system)}`}
             >
-              {u.tag ?? "신규"}
+              {u.system}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-neutral-700">
-                <span className="font-semibold text-neutral-900">{u.system}</span> {u.text}
-              </p>
-              <p className="text-[11px] tabular-nums text-neutral-400">
-                {u.created_at ? u.created_at.slice(0, 10) : ""}
+              <p className="text-sm leading-relaxed text-neutral-700">{u.text}</p>
+              <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-neutral-400">
+                {u.tag && <span>{u.tag}</span>}
+                {u.tag && u.created_at && <span>·</span>}
+                <span className="tabular-nums">{u.created_at ? u.created_at.slice(0, 10) : ""}</span>
               </p>
             </div>
             {isAdmin && (
