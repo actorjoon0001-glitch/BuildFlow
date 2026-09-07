@@ -44,6 +44,7 @@ export function NoticeBoard() {
   const [error, setError] = useState(false);
   const [tab, setTab] = useState("전체");
   const [viewing, setViewing] = useState<Announcement | null>(null);
+  const [readSet, setReadSet] = useState<Set<string>>(new Set());
 
   const [adding, setAdding] = useState(false);
   const [team, setTeam] = useState("전체");
@@ -77,12 +78,54 @@ export function NoticeBoard() {
         setRows((res.data ?? []) as Announcement[]);
         setError(false);
       }
+      // 내가 읽은 공지 집합
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        const rd = await supabase
+          .from("notice_reads")
+          .select("notice_id")
+          .eq("user_id", user.id);
+        if (!rd.error) {
+          setReadSet(new Set(((rd.data ?? []) as { notice_id: string }[]).map((r) => r.notice_id)));
+        }
+      }
     } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  /** 공지 열람 → 뷰어 열기 + 읽음 기록(중복 방지) */
+  async function openNotice(n: Announcement) {
+    setViewing(n);
+    if (readSet.has(n.id)) return;
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const ins = await supabase.from("notice_reads").insert({
+        notice_id: n.id,
+        user_id: user.id,
+        user_name: profile?.name ?? null,
+        department: profile?.team ?? null,
+        showroom: profile?.showroom ?? null,
+      } as never);
+      if (!ins.error) {
+        setReadSet((prev) => new Set(prev).add(n.id));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("seum:notice-read"));
+        }
+      }
+    } catch {
+      // 읽음 기록 실패는 무시 (열람은 정상 동작)
+    }
+  }
 
   useEffect(() => {
     load();
@@ -277,7 +320,7 @@ export function NoticeBoard() {
           <li key={n.id} className="group flex items-center gap-2 py-2.5 text-sm">
             <button
               type="button"
-              onClick={() => setViewing(n)}
+              onClick={() => openNotice(n)}
               className="flex min-w-0 flex-1 items-center gap-2 text-left"
             >
               {n.important && (

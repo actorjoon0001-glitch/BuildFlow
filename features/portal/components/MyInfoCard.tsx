@@ -18,7 +18,8 @@ export function MyInfoCard() {
 
   // 미확인 공지(전체 공지 - 내가 읽은 공지) + 최근 로그인 시각(세션)
   useEffect(() => {
-    (async () => {
+    let active = true;
+    async function loadUnread() {
       try {
         const { createClient } = await import("@/lib/supabase/client");
         const supabase = createClient();
@@ -26,13 +27,13 @@ export function MyInfoCard() {
           data: { user },
         } = await supabase.auth.getUser();
         if (!user) return;
-        setLastLogin(user.last_sign_in_at ?? null);
+        if (active) setLastLogin(user.last_sign_in_at ?? null);
 
         const [annRes, readRes] = await Promise.all([
           supabase.from("announcements").select("id"),
           supabase.from("notice_reads").select("notice_id").eq("user_id", user.id),
         ]);
-        if (annRes.error) return;
+        if (annRes.error || !active) return;
         const readSet = new Set(
           ((readRes.data ?? []) as { notice_id: string }[]).map((r) => r.notice_id),
         );
@@ -41,7 +42,15 @@ export function MyInfoCard() {
       } catch {
         // 조회 실패 시 값 미표시
       }
-    })();
+    }
+    loadUnread();
+    // 공지 열람 시 미확인 수 즉시 갱신
+    const onRead = () => loadUnread();
+    window.addEventListener("seum:notice-read", onRead);
+    return () => {
+      active = false;
+      window.removeEventListener("seum:notice-read", onRead);
+    };
   }, []);
 
   const lastLoginText = lastLogin ? lastLogin.slice(0, 16).replace("T", " ") : "-";
